@@ -1,11 +1,10 @@
 from datetime import datetime
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, json, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-# from forms import RegistrationForm, LoginForm
+from flask_cors import CORS
 
 
-
-
+#### create database comments ####
 # from app import db
 # from app import Person, Segment_skor, Sehir_skor
 # db.create_all()
@@ -21,10 +20,12 @@ from flask_sqlalchemy import SQLAlchemy
 # db.session.add(segment_skor_2)
 # db.session.add(sehir_skor_1)
 # db.session.add(sehir_skor_2)
+# db.session.commit()
 
 
 
 app = Flask(__name__)
+# cors = CORS(app, resources={r"/*": {"localhost": "*"}})
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
@@ -42,7 +43,7 @@ class Person(db.Model):
     sehir_skoru = db.relationship('Sehir_skor', backref='sehir_skor_il', lazy=True)
 
     def __repr__(self):
-        return f"Person('{self.kimlik}', '{self.ad_soyad}', '{self.gelir}', '{self.tel}', '{self.ikamet})', '{self.segment_skor}', '{self.sehir_skor})"
+        return f"Person('{self.kimlik}', '{self.ad_soyad}', '{self.gelir}', '{self.tel}', '{self.ikamet}', '{self.segment_skor}', '{self.sehir_skor})"
 
 
 class Segment_skor(db.Model):
@@ -51,7 +52,7 @@ class Segment_skor(db.Model):
     person_kimlik = db.Column(db.Integer, db.ForeignKey('person.kimlik'), nullable=False)
 
     def __repr__(self):
-        return f"Skor_Segment('{self.person_kimlik}', '{self.skor_segment}')"
+        return f"Skor_Segment('{self.person_kimlik}', '{self.segment_skor}')"
 
 class Sehir_skor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -84,37 +85,29 @@ sehir_skoru = [
         'sehir_skor': '15000',
     }
 ]
-# @app.route("/")
-# @app.route("/home")
-# def home():
-#     return render_template('home.html', posts=posts)
 
 
-# @app.route("/about")
-# def about():
-#     return render_template('about.html', title='About')
+@app.route("/showScore", methods=["GET"])
+def showScore():
+    try:
+        # kimlik_no = request.args.get('kimlik')
+        kimlik_no='12345'
+        person = Person.query.filter_by(kimlik=kimlik_no).first()
+        print(person.kimlik)
+        return jsonify(kimlik_no)
 
+        # if control > 0:
+        #     datas = cur.fetchall()
 
-# @app.route("/register", methods=['GET', 'POST'])
-# def register():
-#     form = RegistrationForm()
-#     if form.validate_on_submit():
-#         flash(f'Account created for {form.username.data}!', 'success')
-#         return redirect(url_for('home'))
-#     return render_template('register.html', title='Register', form=form)
+        #     for data in datas:
+        #         obj = { "id": data[0], "title": data[1], "albumId": data[2], "artistName1": data[3], "artistName2": data[4], "artistName3": data[5], "artistName4": data[6] }
+        #         songs.append(obj)
+        # else:
+        #     print("Kayit bulunamadi")
 
-
-# @app.route("/login", methods=['GET', 'POST'])
-# def login():
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-#             flash('You have been logged in!', 'success')
-#             return redirect(url_for('home'))
-#         else:
-#             flash('Login Unsuccessful. Please check username and password', 'danger')
-#     return render_template('login.html', title='Login', form=form)
-
+        # return jsonify({'data': songs})
+    except Exception as e:
+        return False
 
 if __name__ == '__main__':
     app.run(debug=True)
