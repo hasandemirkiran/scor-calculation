@@ -3,6 +3,27 @@ from flask import Flask, render_template, url_for, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 # from forms import RegistrationForm, LoginForm
 
+
+
+
+# from app import db
+# from app import Person, Segment_skor, Sehir_skor
+# db.create_all()
+# person_1 = Person(kimlik='1234', ad_soyad='hasan d', gelir='5000', tel= '0543', ikamet='34', segment_skor='10000', sehir_skor= '7')
+# person_2 = Person(kimlik='3456', ad_soyad='ahmet d', gelir='10000', tel= '0532', ikamet='35', segment_skor='15000', sehir_skor= '6')
+# segment_skor_1 = Segment_skor(person_kimlik='1234', segment_skor='7')
+# segment_skor_2 = Segment_skor(person_kimlik='3456', segment_skor='6')
+# sehir_skor_1 = Sehir_skor(ikamet_il='34', sehir_skor='10000')
+# sehir_skor_2 = Sehir_skor(ikamet_il='35', sehir_skor='15000')
+# db.session.add(person_1)
+# db.session.add(person_2)
+# db.session.add(segment_skor_1)
+# db.session.add(segment_skor_2)
+# db.session.add(sehir_skor_1)
+# db.session.add(sehir_skor_2)
+
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -15,11 +36,13 @@ class Person(db.Model):
     gelir = db.Column(db.Integer, nullable=False)
     tel = db.Column(db.String(12), unique=True, nullable=False)
     ikamet = db.Column(db.Integer, nullable=False)
+    segment_skor = db.Column(db.Integer, nullable=False)
+    sehir_skor = db.Column(db.Integer, nullable=False)
     segment_skoru = db.relationship('Segment_skor', backref='segment_skor_kimlik', lazy=True)
     sehir_skoru = db.relationship('Sehir_skor', backref='sehir_skor_il', lazy=True)
 
     def __repr__(self):
-        return f"Person('{self.kimlik}', '{self.ad_soyad}', '{self.gelir}', '{self.tel}', '{self.ikamet})"
+        return f"Person('{self.kimlik}', '{self.ad_soyad}', '{self.gelir}', '{self.tel}', '{self.ikamet})', '{self.segment_skor}', '{self.sehir_skor})"
 
 
 class Segment_skor(db.Model):
@@ -58,7 +81,7 @@ sehir_skoru = [
     },
     {
         'sehir_skor_il': '35',
-        'sehir_skor': '150000',
+        'sehir_skor': '15000',
     }
 ]
 # @app.route("/")
