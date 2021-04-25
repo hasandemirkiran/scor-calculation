@@ -2,9 +2,13 @@ import React, { Component } from "react";
 import axios from "axios";
 
 export default class MainComponent extends Component {
-  state = {
-    currentTime: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      age: null,
+    };
+  }
 
   componentDidMount() {
     axios.get(`https://jsonplaceholder.typicode.com/posts`).then((res) => {
