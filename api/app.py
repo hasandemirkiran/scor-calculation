@@ -25,7 +25,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-# cors = CORS(app, resources={r"/*": {"localhost": "*"}})
+cors = CORS(app, resources={r"/*": {"localhost": "*"}})
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
@@ -90,11 +90,40 @@ sehir_skoru = [
 @app.route("/showScore", methods=["GET"])
 def showScore():
     try:
-        # kimlik_no = request.args.get('kimlik')
-        kimlik_no='12345'
+        kimlik_no = '1234'
+        if (request.args.get('kimlik_no') != None ):
+            kimlik_no = request.args.get('kimlik_no')
+
         person = Person.query.filter_by(kimlik=kimlik_no).first()
-        print(person.kimlik)
-        return jsonify(kimlik_no)
+
+        aylik_gelir = '0-2999TL'
+        if (request.args.get('aylik_gelir') != None):
+            aylik_gelir = request.args.get('aylik_gelir')
+
+        gelir_carpani = 800
+
+        if(aylik_gelir == '0-2999TL'):
+            gelir_carpani = 800
+        elif(aylik_gelir == '3000TL-4999TL'):
+            gelir_carpani = 1000
+        elif(aylik_gelir == '5000TL-7999TL'):
+            gelir_carpani = 1200
+        elif(aylik_gelir == '8000TL-11999TL'):
+            gelir_carpani = 1400
+        else:
+            gelir_carpani = 2000
+
+        print("----------", kimlik_no)
+        segment_skoru = person.segment_skoru[0].segment_skor
+        sehir_skoru = person.sehir_skoru[0].sehir_skor
+
+        print(segment_skoru)
+        print(gelir_carpani)
+        print(sehir_skoru)
+
+        print("RESULT",  segment_skoru*gelir_carpani+sehir_skoru)
+
+        return (jsonify(segment_skoru*gelir_carpani+sehir_skoru))
 
         # if control > 0:
         #     datas = cur.fetchall()
